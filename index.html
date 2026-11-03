@@ -21,30 +21,68 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
+      background: linear-gradient(135deg, #fff0f3 0%, #ffe3e8 100%);
       color: var(--text);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       padding: 15px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Dezent schwebende Hintergrund-Herzen */
+    .bg-hearts {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-heart {
+      position: absolute;
+      bottom: -50px;
+      color: rgba(255, 77, 109, 0.15);
+      animation: floatUp 8s infinite linear;
+      font-size: 1.5rem;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-105vh) rotate(360deg);
+        opacity: 0;
+      }
     }
 
     .container {
       background: var(--card-bg);
       border-radius: 24px;
-      padding: 30px 20px;
+      padding: 35px 25px;
       max-width: 450px;
       width: 100%;
-      box-shadow: 0 10px 30px rgba(255, 77, 109, 0.15);
+      box-shadow: 0 15px 35px rgba(255, 77, 109, 0.12);
       text-align: center;
       position: relative;
-      overflow: hidden;
+      z-index: 1;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
     .step {
       display: none;
-      animation: fadeIn 0.4s ease-in-out forwards;
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .step.active {
@@ -52,8 +90,8 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(15px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     h1 {
@@ -79,7 +117,7 @@
     }
 
     button, .btn {
-      background-color: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, #ff758f 100%);
       color: white;
       border: none;
       padding: 12px 28px;
@@ -88,13 +126,17 @@
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+      box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
       user-select: none;
     }
 
     button:hover, .btn:hover {
-      background-color: var(--primary-hover);
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4);
+    }
+
+    button:active {
+      transform: translateY(1px);
     }
 
     #yesBtn {
@@ -103,11 +145,11 @@
     }
 
     #noBtn {
-      background-color: #adb5bd;
+      background: #adb5bd;
       box-shadow: none;
       position: relative;
       z-index: 1;
-      transition: transform 0.15s ease-out;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     /* Grid für Aktivitäts-Vorschläge */
@@ -128,11 +170,19 @@
       align-items: center;
       gap: 12px;
       text-align: left;
+      background: #fff;
     }
 
-    .card:hover, .card.selected {
+    .card:hover {
+      border-color: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.08);
+    }
+
+    .card.selected {
       border-color: var(--primary);
       background-color: #fff0f3;
+      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.15);
     }
 
     .card-icon {
@@ -160,20 +210,30 @@
       font-weight: bold;
       margin-bottom: 6px;
       font-size: 0.9rem;
+      color: #4a4e69;
     }
 
-    input[type="date"], input[type="time"], input[type="text"] {
+    input[type="date"], input[type="time"], input[type="text"], textarea {
       width: 100%;
       padding: 10px 12px;
       border: 2px solid #ffe3e8;
       border-radius: 12px;
       font-size: 1rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
+      font-family: inherit;
+      background: #faf9f9;
     }
 
-    input:focus {
+    input:focus, textarea:focus {
       border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
     }
 
     #customActivityGroup {
@@ -182,12 +242,21 @@
     }
 
     .hearts {
-      font-size: 2.5rem;
+      font-size: 3rem;
       margin-bottom: 10px;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
   </style>
 </head>
 <body>
+
+  <!-- Schwebende Hintergrund-Herzen -->
+  <div class="bg-hearts" id="bgHearts"></div>
 
   <div class="container">
     
@@ -210,7 +279,7 @@
       <button onclick="nextStep(3)">Weiter zur Planung ✨</button>
     </div>
 
-    <!-- SCHRITT 3: Vorschläge & Datum/Uhrzeit -->
+    <!-- SCHRITT 3: Vorschläge, Datum, Uhrzeit & Notiz -->
     <div id="step3" class="step">
       <h1>Was wollen wir machen?</h1>
       <p>Wähle deine Lieblings-Option:</p>
@@ -255,6 +324,12 @@
         <input type="time" id="timeInput">
       </div>
 
+      <!-- Notiz / Anmerkungen Feld -->
+      <div class="form-group">
+        <label for="noteInput">📝 Notiz / Anmerkungen (optional)</label>
+        <textarea id="noteInput" placeholder="Z.B. Treffpunkt, Vorlieben oder eine süße Nachricht..."></textarea>
+      </div>
+
       <button onclick="sendWebhook()" style="width: 100%; margin-top: 5px;">Date bestätigen! 💌</button>
     </div>
 
@@ -270,11 +345,28 @@
   <script>
     const WEBHOOK_URL = "https://discord.com/api/webhooks/1567278181738872852/rrBP_hanxXMs_n4nbVJrnMcyz0WPNrF8ZBJiJHt6HmSVH8ix4GeWeUYwQAECq8onbjMG";
     let selectedActivity = "Noch nichts ausgewählt";
+    let noClickCount = 0;
 
-    // "Nein"-Button springt nun kontrolliert umher, ohne über den Ja-Button zu legen
+    // Erzeuge dezente, schwebende Hintergrund-Herzen automatisch
+    function createBgHearts() {
+      const container = document.getElementById('bgHearts');
+      const symbols = ['❤️', '💖', '✨', '💕'];
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'bg-heart';
+        heart.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = (6 + Math.random() * 6) + 's';
+        heart.style.animationDelay = (Math.random() * 5) + 's';
+        container.appendChild(heart);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', createBgHearts);
+
+    // "Nein"-Button weglassen und Zähler erhöhen
     function moveNoButton() {
+      noClickCount++;
       const noBtn = document.getElementById("noBtn");
-      const container = document.querySelector(".container");
       
       const maxX = 120;
       const maxY = 80;
@@ -314,6 +406,7 @@
 
       const date = document.getElementById("dateInput").value || "Kein Datum gewählt";
       const time = document.getElementById("timeInput").value || "Keine Uhrzeit gewählt";
+      const note = document.getElementById("noteInput").value.trim() || "Keine Notiz hinterlassen";
 
       const payload = {
         embeds: [{
@@ -322,7 +415,9 @@
           fields: [
             { name: "Aktivität", value: finalActivity, inline: false },
             { name: "Datum", value: date, inline: true },
-            { name: "Uhrzeit", value: time, inline: true }
+            { name: "Uhrzeit", value: time, inline: true },
+            { name: "Notiz", value: note, inline: false },
+            { name: "😜 'Nein'-Versuche", value: `${noClickCount}x ausgewichen`, inline: false }
           ],
           timestamp: new Date().toISOString()
         }]
