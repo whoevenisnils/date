@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Willst du mit mir ausgehen? 💕</title>
+  <style>
+    :root {
+      --bg-color: #fff0f3;
+      --card-bg: #ffffff;
+      --primary: #ff4d6d;
+      --primary-hover: #ff758f;
+      --text: #2b2d42;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 40px 30px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(255, 77, 109, 0.15);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step {
+      display: none;
+      animation: fadeIn 0.4s ease-in-out forwards;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+      color: #666;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      position: relative;
+      min-height: 60px;
+    }
+
+    button, .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+    }
+
+    button:hover, .btn:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    #noBtn {
+      background-color: #adb5bd;
+      box-shadow: none;
+      position: absolute;
+    }
+
+    /* Grid für Aktivitäts-Vorschläge */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      border: 2px solid #ffe3e8;
+      border-radius: 16px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      text-align: left;
+    }
+
+    .card:hover, .card.selected {
+      border-color: var(--primary);
+      background-color: #fff0f3;
+      transform: scale(1.02);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+    }
+
+    .card-title {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    input[type="date"], input[type="time"], input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ffe3e8;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    #customActivityGroup {
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .hearts {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- SCHRITT 1: Die Frage -->
+    <div id="step1" class="step active">
+      <div class="hearts">💖</div>
+      <h1>Willst du mit mir ausgehen?</h1>
+      <p>Ich würde mich riesig freuen!</p>
+      <div class="btn-group" id="btnGroup">
+        <button id="yesBtn" onclick="nextStep(2)">Ja! 🥰</button>
+        <button id="noBtn" onmouseover="moveNoButton()" onclick="moveNoButton()">Nein 😜</button>
+      </div>
+    </div>
+
+    <!-- SCHRITT 2: Bestätigung -->
+    <div id="step2" class="step">
+      <div class="hearts">🎉🥳</div>
+      <h1>Jaaaa! Ich freue mich so!</h1>
+      <p>Lass uns ein perfektes Date planen.</p>
+      <button onclick="nextStep(3)">Weiter zur Planung ✨</button>
+    </div>
+
+    <!-- SCHRITT 3: Vorschläge & Datum/Uhrzeit -->
+    <div id="step3" class="step">
+      <h1>Was wollen wir machen?</h1>
+      <p>Wähle deine Lieblings-Option:</p>
+      
+      <div class="grid">
+        <div class="card" onclick="selectActivity(this, 'Lego bauen')">
+          <div class="card-icon">🧱</div>
+          <div>
+            <div class="card-title">Lego bauen</div>
+            <div class="card-desc">Gemütlich zusammen ein Set zusammenbauen & snacken</div>
+          </div>
+        </div>
+        <div class="card" onclick="selectActivity(this, 'Minigolf spielen')">
+          <div class="card-icon">⛳</div>
+          <div>
+            <div class="card-title">Minigolf spielen</div>
+            <div class="card-desc">Eine Runde Minigolf mit ein bisschen Spaß-Wettkampf</div>
+          </div>
+        </div>
+        <div class="card" onclick="selectActivity(this, 'Eigenes Date')">
+          <div class="card-icon">✨</div>
+          <div>
+            <div class="card-title">Eigenes Date aussuchen</div>
+            <div class="card-desc">Du hast eine bessere Idee? Lass es mich wissen!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eingabefeld für eigenes Date (erscheint nur, wenn ausgewählt) -->
+      <div class="form-group" id="customActivityGroup">
+        <label for="customInput">💭 Was ist deine Idee?</label>
+        <input type="text" id="customInput" placeholder="Z.B. Picknick im Park, Kochabend...">
+      </div>
+
+      <div class="form-group">
+        <label for="dateInput">📅 Welcher Tag passt dir?</label>
+        <input type="date" id="dateInput">
+      </div>
+
+      <div class="form-group">
+        <label for="timeInput">⏰ Um wie viel Uhr?</label>
+        <input type="time" id="timeInput">
+      </div>
+
+      <button onclick="sendWebhook()">Date bestätigen! 💌</button>
+    </div>
+
+    <!-- SCHRITT 4: Dankeschön -->
+    <div id="step4" class="step">
+      <div class="hearts">💌</div>
+      <h1>Perfekt!</h1>
+      <p>Deine Auswahl wurde abgeschickt. Ich freue mich riesig auf unser Date!</p>
+    </div>
+
+  </div>
+
+  <script>
+    // Dein Discord Webhook ist hier hinterlegt
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1567278181738872852/rrBP_hanxXMs_n4nbVJrnMcyz0WPNrF8ZBJiJHt6HmSVH8ix4GeWeUYwQAECq8onbjMG";
+
+    let selectedActivity = "Noch nichts ausgewählt";
+
+    // "Nein"-Button weglaufen lassen
+    function moveNoButton() {
+      const noBtn = document.getElementById("noBtn");
+      const container = document.querySelector(".container");
+      
+      const maxX = container.clientWidth - noBtn.clientWidth - 40;
+      const maxY = container.clientHeight - noBtn.clientHeight - 40;
+
+      const randomX = Math.floor(Math.random() * maxX) - (maxX / 2);
+      const randomY = Math.floor(Math.random() * maxY) - (maxY / 2);
+
+      noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+    }
+
+    function nextStep(stepNumber) {
+      document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+      document.getElementById(`step${stepNumber}`).classList.add('active');
+    }
+
+    function selectActivity(element, activityName) {
+      document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedActivity = activityName;
+
+      const customGroup = document.getElementById("customActivityGroup");
+      if (activityName === 'Eigenes Date') {
+        customGroup.style.display = "block";
+      } else {
+        customGroup.style.display = "none";
+      }
+    }
+
+    // Webhook-Benachrichtigung senden
+    async function sendWebhook() {
+      let finalActivity = selectedActivity;
+      if (selectedActivity === 'Eigenes Date') {
+        const customVal = document.getElementById("customInput").value;
+        if (customVal) {
+          finalActivity = `Eigenes Date: ${customVal}`;
+        }
+      }
+
+      const date = document.getElementById("dateInput").value || "Kein Datum gewählt";
+      const time = document.getElementById("timeInput").value || "Keine Uhrzeit gewählt";
+
+      const payload = {
+        embeds: [{
+          title: "💖 Neues Date vereinbart!",
+          color: 16731245,
+          fields: [
+            { name: "Aktivität", value: finalActivity, inline: false },
+            { name: "Datum", value: date, inline: true },
+            { name: "Uhrzeit", value: time, inline: true }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        nextStep(4);
+      } catch (error) {
+        console.error("Fehler beim Senden:", error);
+        alert("Ups, da gab es einen Fehler. Aber deine Auswahl steht!");
+        nextStep(4);
+      }
+    }
+
+    // "Nein"-Button initial in die Position bringen
+    document.addEventListener("DOMContentLoaded", () => {
+      const noBtn = document.getElementById("noBtn");
+      noBtn.style.right = "40px";
+    });
+  </script>
+</body>
+</html>
